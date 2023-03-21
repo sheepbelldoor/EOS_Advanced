@@ -20,7 +20,7 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen> {
         children: [
           Positioned(
             top: 0, left: 0, right: 0,
-              child: Container(
+              child: Container( // Box of green background
                 height: 300,
                 decoration: BoxDecoration(
                   image: DecorationImage(
@@ -35,25 +35,51 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           RichText(text: TextSpan(
-                              text: 'Welcome', style: TextStyle(letterSpacing: 1.0, fontSize: 25, color: Colors.white),
+                              text: 'Welcome',
+                              style: TextStyle(
+                                  letterSpacing: 1.0,
+                                  fontSize: 25,
+                                  color: Colors.white
+                              ),
                               children: [
-                                TextSpan(text: ' to EOS Chat', style: TextStyle(letterSpacing: 1.0, fontSize: 25, color: Colors.white, fontWeight: FontWeight.bold))
+                                TextSpan(
+                                    text: isSignupScreen
+                                        ?' to EOS Chat'
+                                        :' back',
+                                    style: TextStyle(
+                                        letterSpacing: 1.0,
+                                        fontSize: 25,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold
+                                    )
+                                )
                               ]
                           )),
                           
                           SizedBox(
                             height: 5.0,
                           ),
-                          Text( 'Sign up to continue', style: TextStyle(letterSpacing: 1.0, color: Colors.white)),
+                          Text( isSignupScreen
+                              ? 'Sign up to continue'
+                              : 'Sign in to continue',
+                              style: TextStyle(
+                                  letterSpacing: 1.0,
+                                  color: Colors.white
+                              )
+                          ),
                         ],
                       )
                   )
               ) ),
 
-          Positioned(
+          Positioned( // Box of LOGIN and SIGN UP
             top: 180,
-              child: Container(
-                height: 280.0, padding: EdgeInsets.all(20), width: MediaQuery.of(context).size.width - 40,
+              child: AnimatedContainer( // Size of Box
+                height: isSignupScreen
+                    ? 330.0
+                    : 280.0,
+                padding: EdgeInsets.all(20),
+                width: MediaQuery.of(context).size.width - 40,
                 margin: EdgeInsets.only(left: 20, right: 20),
                 decoration: BoxDecoration(
                   color: Colors.white, borderRadius: BorderRadius.circular(15),
@@ -63,45 +89,127 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen> {
                     )
                   ]
                 ),
-
+                duration: const Duration(milliseconds: 500,),
+                curve: Curves.easeIn,
                 child: Column(
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        GestureDetector(
-                          child: Column(
-                            children: [
-                              Text('LOGIN', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color:isSignupScreen ? Palette.textColor1 : Palette.activeColor ),),
-                              if (!isSignupScreen) //SignupScreen이 false 일때
-                                Container(margin: EdgeInsets.only(top: 3), height: 2, width: 55, color: Colors.green)
-                            ],
-                          ),
-                        ),
-                        GestureDetector(
+                        GestureDetector( // GestureDetector of Login
+                          onTap: () {
+                            setState(() {
+                              isSignupScreen = false;
+                            });
+                          },
                           child: Column(
                             children: [
                               Text(
-                                'SIGN UP', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: isSignupScreen ? Palette.activeColor : Palette.textColor1),
+                                'LOGIN',
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: !isSignupScreen
+                                        ? Palette.activeColor
+                                        : Palette.textColor1 ),
                               ),
-
+                              if (!isSignupScreen) //SignupScreen이 false 일때
+                                Container(
+                                    margin: EdgeInsets.only(top: 3),
+                                    height: 2,
+                                    width: 55,
+                                    color: Colors.green
+                                )
+                            ],
+                          ),
+                        ),
+                        GestureDetector( // GestureDetector of Sign up
+                          onTap: () {
+                            setState(() {
+                              isSignupScreen = true;
+                            });
+                          },
+                          child: Column(
+                            children: [
+                              Text(
+                                'SIGN UP',
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: isSignupScreen
+                                        ? Palette.activeColor
+                                        : Palette.textColor1),
+                              ),
                               if (isSignupScreen) //SignupScreen이 true 일때
-                                Container(margin: EdgeInsets.only(top: 3), height: 2, width: 55, color: Colors.green)
+                              Container(
+                                  margin: EdgeInsets.only(top: 3),
+                                  height: 2,
+                                  width: 55,
+                                  color: Colors.green,
+                              )
                             ] ,
                           ),
                         ),
                       ],
                     ),
                     Container(
+                      margin: EdgeInsets.only(top: 20),
                       child: Form(
                         child: Column(
                           children: [
-                            TextFormField(
+                            TextFormField( // Login: email, Sign up: Username
                                 decoration: InputDecoration(
-                                  prefixIcon: Icon(Icons.adb),
-                                  prefixIconColor: Palette.iconColor,
+                                  hintText: isSignupScreen ? 'Username' : 'Email',
+                                  prefixIcon: Icon(
+                                      isSignupScreen
+                                          ? Icons.account_circle
+                                          : Icons.mail,
+                                      color: Palette.iconColor),
                                   enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: Palette.textColor1), borderRadius: BorderRadius.circular(35)),
+                                      borderSide: BorderSide(color: Palette.textColor1),
+                                      borderRadius: BorderRadius.circular(35.0)),
+                                  focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(color: Palette.textColor1),
+                                      borderRadius: BorderRadius.all(Radius.circular(35.0))
+                                  ),
+                                )
+                            ),
+                            SizedBox(
+                              height: 8,
+                            ),
+                            TextFormField( // Login: password, Sign up: email
+                                decoration: InputDecoration(
+                                  hintText: isSignupScreen ? 'Email' : 'Password',
+                                  prefixIcon: Icon(
+                                      isSignupScreen
+                                          ? Icons.email
+                                          : Icons.lock,
+                                      color: Palette.iconColor),
+                                  enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(color: Palette.textColor1),
+                                      borderRadius: BorderRadius.circular(35.0)),
+                                  focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(color: Palette.textColor1),
+                                      borderRadius: BorderRadius.all(Radius.circular(35.0))
+                                  ),
+                                )
+                            ),
+                            SizedBox(
+                              height: 8,
+                            ),
+                            if(isSignupScreen) // Using only Sign up screen, password slot
+                              TextFormField(
+                                decoration: InputDecoration(
+                                  hintText: 'Password',
+                                  prefixIcon: Icon(Icons.lock,
+                                      color: Palette.iconColor),
+                                  enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(color: Palette.textColor1),
+                                      borderRadius: BorderRadius.circular(35.0)),
+                                  focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(color: Palette.textColor1),
+                                      borderRadius: BorderRadius.all(Radius.circular(35.0))
+                                  ),
                                 )
                             ),
                           ],
@@ -110,6 +218,73 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen> {
                     )
                   ],
                 ),
+              )
+          ),
+          AnimatedPositioned( // Arrow button under login and sign up box
+            top: isSignupScreen
+                ? 460
+                : 410,
+            right: 0,
+            left: 0,
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.easeIn,
+              child: Center(
+                child: Container(
+                  padding: EdgeInsets.all(15.0), height: 90, width: 90,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(50),
+                    color: Colors.white,
+                  ),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [Colors.lightGreen, Colors.green],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight
+                        ),
+                        borderRadius: BorderRadius.circular(30),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.3),
+                            spreadRadius: 1,
+                            blurRadius: 1,
+                            offset: Offset(0, 1)
+                          )
+                        ]
+                      ),
+                      child: Icon(
+                        Icons.arrow_forward,
+                        color: Colors.white,
+                      )
+                    )
+                  )
+              ),
+          ),
+          Positioned( // Box of Google button and text
+              top: MediaQuery.of(context).size.height - 125, right: 0, left: 0,
+              child: Column(
+                children: [
+                  Text( isSignupScreen
+                      ? "or Sign up with"
+                      : "or Sign in with"
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  TextButton.icon(
+                      onPressed: () {},
+                      style: TextButton.styleFrom(
+                        primary: Colors.white,
+                        minimumSize: Size(155, 40),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)
+                        ),
+                        backgroundColor: Palette.googleColor,
+                      ),
+                    icon: Icon(Icons.add),
+                    label: Text("Google"),
+                  )
+                ],
               )
           )
         ],
